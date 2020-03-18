@@ -112,4 +112,33 @@ Hãy nhìn vào kết quả đầu ra, khi stringify obj 1, kết quả cho chú
 
 ## Advanced modules (in case you need extra juice)
 
+Phương thức stringify có thể đáp ứng được tương đối nhu cầu serialization JSON thông thường, những trong một số trường hợp đặc biệt, 2 bài toán mà method này không đáp ứng được như sau:
 
+- Muốn serialize những phương thức an toàn để bạn có thể hủy serialize chúng và sử dụng chúng tại đích đến. 
+- Vấn đề nữa là bạn xử lý rất nhiều dữ liệu bên trong JSON của bạn. (Những chuỗi JSON có kích thước lên tới hàng Gb)
+
+Bạn có thể có các cách xử lý cho 2 bài toán này, hoặc bạn có thể xử lý logic vào bài toán của bạn hoặc tìm một module phù hợp cho nó. Một trong số package bạn bạn có thể xem xét để sử dụng là node-serialize. Tuy nhiên, bận nên lưu ý tới việc bảo mật vì sử dụng module này để gửi mã tới process đích là một rủi ro bảo mật rất lớn. 
+
+Cách sử dụng như sau: 
+
+```
+const serialize = require("node-serialize")
+var obj = {
+  name: 'Bob',
+  say: function() {
+    return 'hi ' + this.name; 
+  }
+};
+
+var objS = serialize.serialize(obj);
+console.log(typeof objS === 'string');
+console.log(objS)
+console.log(serialize.unserialize(objS).say() === 'hi Bob')
+```
+Ouput thu được như sau:
+
+```
+true
+{“name”:”Bob”,”say”:”_$$ND_FUNC$$_function() {n return ‘hi ‘ + this.name;n }”}
+true
+```
